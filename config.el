@@ -261,7 +261,7 @@
 ;; Add dendroam to current org roam node display template
 (setq org-roam-node-display-template
         (format "%s %s ${hierarchy}:${title}"
-                (propertize "${doom-type:23}" 'face 'font-lock-keyword-face)
+                (propertize "${doom-type:14}" 'face 'font-lock-keyword-face)
                 (propertize "${tags:12}" 'face '(:inherit org-tag :box nil))))
 
 ;; org-roam-ui
