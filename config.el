@@ -165,11 +165,11 @@
         )
     )
     ("w" "Weekly review"
-        ((agenda "" ((org-agenda-span -14)
+        ((agenda "" ((org-agenda-span '14)
                      (org-agenda-start-day "-7d")
                      (org-super-agenda-groups
                          '(
-                           (:name "Previous and upcoming weeks"
+                           (:name ""
                             :time-grid t
                             :todo "TODO"
                             :discard (:todo "HABIT")
