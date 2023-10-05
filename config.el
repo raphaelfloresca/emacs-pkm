@@ -21,9 +21,9 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-(setq doom-font (font-spec :family "MesloLGS Nerd Font Mono" :size 24 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "MesloLGS Nerd Font Propo" :size 24)
-      doom-unicode-font (font-spec :family "MesloLGS Nerd Font" :size 24))
+(setq doom-font (font-spec :family "MesloLGS Nerd Font Mono" :size 20 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "MesloLGS Nerd Font Propo" :size 20)
+      doom-unicode-font (font-spec :family "MesloLGS Nerd Font" :size 20))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -65,12 +65,13 @@
   ;; Leave note in logbook when task done
   (setq org-log-done 'note)
   ;; Leave note in logbook if task is rescheduled
-  (setq org-log-reschedule 'note))
+  (setq org-log-reschedule 'note)
+  (setq org-tags-exclude-from-inheritance '("journal")))
 
 ;; Refresh agenda folder
 (defun my/org-roam-refresh-agenda-list ()
   (interactive)
-  (setq org-agenda-files '("/mnt/c/Users/user/OneDrive/00 PKM/pages/agenda")))
+  (setq org-agenda-files '("~/OneDrive/emacs-PKM/pages/agenda")))
 
 ;; Build the agenda list the first time for the session
 (my/org-roam-refresh-agenda-list)
@@ -184,11 +185,11 @@
                       :order 1)
                      (:discard (:anything t))))))
         (todo "" ((org-agenda-overriding-header "")
-                  (org-agenda-files '("/mnt/c/Users/user/OneDrive/00 PKM/pages/agenda/Single Actions.org"))
+                  (org-agenda-files '("~/OneDrive/emacs-PKM/pages/agenda/Single Actions.org"))
                   (org-super-agenda-groups
                    '((:auto-outline-path t)))))
         (todo "" ((org-agenda-overriding-header "")
-                  (org-agenda-files '("/mnt/c/Users/user/OneDrive/00 PKM/pages/Someday Maybe.org"))
+                  (org-agenda-files '("~/OneDrive/emacs-PKM/pages/Someday Maybe.org"))
                   (org-super-agenda-groups
                    '((:name "Someday/Maybe"
                       :todo "SOMEDAY"
@@ -205,7 +206,7 @@
 (use-package! org-roam
   :custom
   ;; Set org roam directorry
-  (org-roam-directory "/mnt/c/Users/user/OneDrive/00 PKM")
+  (org-roam-directory "~/OneDrive/emacs-PKM")
   (org-roam-dailies-directory "journals")
   (org-roam-completion-everywhere t)
   (org-roam-file-exclude-regexp "\\.st[^/]*\\|logseq/.*$")
@@ -214,8 +215,12 @@
       :target (file+head "pages/${title}.org" "#+title: ${title}\n")
       :unnarrowed t)
       ("p" "project" plain
-      (file "/mnt/c/Users/user/OneDrive/03 Resources/Org Roam Capture Templates/project-template.org")
-      :target (file+head "pages/${title}.org" "#+title: ${title}\n")
+      (file "~/OneDrive/03 Resources/Org Roam Capture Templates/project-template.org")
+      :target (file+head "pages/agenda/projects${title}.org" "#+title: ${title}\n")
+      :unnarrowed t)
+      ("w" "weekly review" plain
+      (file "~/OneDrive/03 Resources/Org Roam Capture Templates/weekly-review-template.org")
+      :target (file+head "pages/agenda/reviews/${title}.org" "#+title: ${title}\n")
       :unnarrowed t)
     )
   )
@@ -223,18 +228,72 @@
     '(("d" "default" entry "* %?"
       :target (file+head "%<%Y_%m_%d>.org" "#+title: %<%Y-%m-%d>\n"))
       ("n" "new day" plain
-      (file "/mnt/c/Users/user/OneDrive/03 Resources/Org Roam Capture Templates/daily-template.org")
+      (file "~/OneDrive/03 Resources/Org Roam Capture Templates/daily-template.org")
       :target (file+head "%<%Y_%m_%d>.org" "#+title: %<%Y-%m-%d>\n"))
      )
   )
 )
 
-
 ;; Allow refiling to non-agenda files
 (defun ndk/org-refile-candidates ()
-  (directory-files-recursively "/mnt/c/Users/user/OneDrive/00 PKM" "^[[:alnum:]].*\\.org\\'"))
+  (directory-files-recursively "~/OneDrive/emacs-PKM" "^[[:alnum:]].*\\.org\\'"))
 
 (add-to-list 'org-refile-targets '(ndk/org-refile-candidates :maxlevel . 3))
+
+;; org-roam-ql
+(use-package! org-roam-ql
+  ;; Simple configuration
+  :after (org-roam)
+  :bind ((:map org-roam-mode-map
+               ;; Have org-roam-ql's transient available in org-roam-mode buffers
+               ("v" . org-roam-ql-buffer-dispatch)
+               :map minibuffer-mode-map
+               ;; Be able to add titles in queries while in minibuffer.
+               ;; This is similar to `org-roam-node-insert', but adds
+               ;; only title as a string.
+               ("C-c n i" . org-roam-ql-insert-node-title))))
+
+
+;; dendroam
+(use-package! dendroam
+  :after org-roam)
+
+;; Add dendroam to current org roam node display template
+(setq org-roam-node-display-template
+        (format "%s %s ${hierarchy}:${title}"
+                (propertize "${doom-type:23}" 'face 'font-lock-keyword-face)
+                (propertize "${tags:12}" 'face '(:inherit org-tag :box nil))))
+
+;; org-roam-ui
+(use-package! websocket
+  :after org-roam)
+
+;; org-roam-ui
+(use-package! org-roam-ui
+  :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+
+;; org-transclusion
+(use-package! org-transclusion
+  :after org
+  :init
+  (map!
+   :map global-map "<f12>" #'org-transclusion-add
+   :leader
+   :prefix "n"
+   :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
+
+(cl-defmethod org-roam-node-related-nodes ((node org-roam-node))
+  "Return the RELATED_NODES for NODE."
+  (cdr (assoc-string "RELATED_NODES" (org-roam-node-properties node))))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
