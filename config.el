@@ -49,24 +49,29 @@
   ;; Record keyword changes in logbook
   (setq org-todo-keywords
     '((sequence
-      "TODO(t@/!)"  ; A task that needs doing & is ready to do
-      "PROJ(p@/!)"  ; A project, which usually contains other tasks
-      "WAIT(w@/!)"  ; Something external is holding up this task
-      "HABIT(H)"    ; Habit
-      "SOMEDAY(s)"  ; Someday/maybe
-      "WEEKLY(W)"   ; Weekly review
-      "MONTHLY(M)"  ; Monthly review
-      "SEASONAL(S)" ; Seasonal review
-      "ANNUAL(A)"   ; Annual review
-      "DONE(d@/!)"  ; Task successfully completed
-     )))
+      "TODO(t/!)"      ; A task that needs doing & is ready to do
+      "PROJ(p)"      ; A project, which usually contains other tasks
+      "LOOP(r)"      ; A recurring task
+      "STRT(s@/!)"      ; A task that is in progress
+      "WAIT(w@/!)"      ; Something external is holding up this task
+      "HOLD(h@/!)"      ; This task is paused/on hold because of me
+      "IDEA(i/!)"      ; An unconfirmed and unapproved task or notion
+      "|"
+      "DONE(d@)"      ; Task successfully completed
+      "KILL(k@)")     ; Task was cancelled, aborted or is no longer applicable
+      (sequence
+      "HABIT(H)"     ; Habit
+      "SOMEDAY(S)"   ; Someday/maybe
+      "WEEKLY(W)"    ; Weekly review
+      "MONTHLY(M)"   ; Monthly review
+      "QUARTERLY(Q)" ; Seasonal review
+      "ANNUAL(A)"))) ; Annual review
   ;; Leave quick notes in logbook
   (setq org-log-into-drawer 'LOGBOOK)
   ;; Leave note in logbook when task done
   (setq org-log-done 'note)
   ;; Leave note in logbook if task is rescheduled
-  (setq org-log-reschedule 'note)
-  (setq org-tags-exclude-from-inheritance '("journal")))
+  (setq org-log-reschedule 'note))
 
 ;; Refresh agenda folder
 (defun my/org-roam-refresh-agenda-list ()
@@ -263,6 +268,12 @@
         (format "%s %s ${hierarchy}:${title}"
                 (propertize "${doom-type:14}" 'face 'font-lock-keyword-face)
                 (propertize "${tags:12}" 'face '(:inherit org-tag :box nil))))
+
+;; org-excalidraw
+(use-package! org-excalidraw
+  :after org
+  :config
+  (setq org-excalidraw-directory "~/OneDrive/03 Resources/Excalidraw Drawings"))
 
 ;; org-roam-ui
 (use-package! websocket

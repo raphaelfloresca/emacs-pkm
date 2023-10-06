@@ -14,6 +14,7 @@
 (package! org-transclusion)
 (package! org-super-agenda)
 (package! anki-editor)
+(package! org-kanban)
 
 ;; To install a package directly from a remote git repo, you must specify a
 ;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
@@ -24,6 +25,8 @@
   :recipe (:type git :host github :repo "ahmed-shariff/org-roam-ql" :files (:defaults (:exclude "org-roam-ql-ql.el"))))
 (package! dendroam
   :recipe (:host github :repo "vicrdguez/dendroam"))
+(package! org-excalidraw
+  :recipe (:host github :repo "wdavew/org-excalidraw"))
 
 ;; If the package you are trying to install does not contain a PACKAGENAME.el
 ;; file, or is located in a subdirectory of the repo, you'll need to specify
