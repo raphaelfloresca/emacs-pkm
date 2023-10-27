@@ -21,9 +21,9 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;
-(setq doom-font (font-spec :family "MesloLGS Nerd Font Mono" :size 20 :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "MesloLGS Nerd Font Propo" :size 20)
-      doom-unicode-font (font-spec :family "MesloLGS Nerd Font" :size 20))
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font Mono" :size 26 :weight 'semi-light)
+      doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font Propo" :size 26)
+      doom-unicode-font (font-spec :family "JetBrainsMono Nerd Font" :size 26))
 ;;
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
@@ -76,7 +76,7 @@
 ;; Refresh agenda folder
 (defun my/org-roam-refresh-agenda-list ()
   (interactive)
-  (setq org-agenda-files '("~/OneDrive/emacs-PKM/pages/agenda")))
+  (setq org-agenda-files '("~/org/roam/pages/agenda")))
 
 ;; Build the agenda list the first time for the session
 (my/org-roam-refresh-agenda-list)
@@ -190,11 +190,11 @@
                       :order 1)
                      (:discard (:anything t))))))
         (todo "" ((org-agenda-overriding-header "")
-                  (org-agenda-files '("~/OneDrive/emacs-PKM/pages/agenda/Single Actions.org"))
+                  (org-agenda-files '("~/org/roam/pages/agenda/Single Actions.org"))
                   (org-super-agenda-groups
                    '((:auto-outline-path t)))))
         (todo "" ((org-agenda-overriding-header "")
-                  (org-agenda-files '("~/OneDrive/emacs-PKM/pages/Someday Maybe.org"))
+                  (org-agenda-files '("~/org/roam/pages/Someday Maybe.org"))
                   (org-super-agenda-groups
                    '((:name "Someday/Maybe"
                       :todo "SOMEDAY"
@@ -211,7 +211,7 @@
 (use-package! org-roam
   :custom
   ;; Set org roam directorry
-  (org-roam-directory "~/OneDrive/emacs-PKM")
+  (org-roam-directory "~/org/roam")
   (org-roam-dailies-directory "journals")
   (org-roam-completion-everywhere t)
   (org-roam-file-exclude-regexp "\\.st[^/]*\\|logseq/.*$")
@@ -220,11 +220,11 @@
       :target (file+head "pages/${title}.org" "#+title: ${title}\n")
       :unnarrowed t)
       ("p" "project" plain
-      (file "~/OneDrive/03 Resources/Org Roam Capture Templates/project-template.org")
+      (file "~/org/templates/project-template.org")
       :target (file+head "pages/agenda/projects${title}.org" "#+title: ${title}\n")
       :unnarrowed t)
       ("w" "weekly review" plain
-      (file "~/OneDrive/03 Resources/Org Roam Capture Templates/weekly-review-template.org")
+      (file "~/org/templates/weekly-review-template.org")
       :target (file+head "pages/agenda/reviews/${title}.org" "#+title: ${title}\n")
       :unnarrowed t)
     )
@@ -233,7 +233,7 @@
     '(("d" "default" entry "* %?"
       :target (file+head "%<%Y_%m_%d>.org" "#+title: %<%Y-%m-%d>\n"))
       ("n" "new day" plain
-      (file "~/OneDrive/03 Resources/Org Roam Capture Templates/daily-template.org")
+      (file "~/org/templates/daily-template.org")
       :target (file+head "%<%Y_%m_%d>.org" "#+title: %<%Y-%m-%d>\n"))
      )
   )
@@ -241,7 +241,7 @@
 
 ;; Allow refiling to non-agenda files
 (defun ndk/org-refile-candidates ()
-  (directory-files-recursively "~/OneDrive/emacs-PKM" "^[[:alnum:]].*\\.org\\'"))
+  (directory-files-recursively "~/org/roam" "^[[:alnum:]].*\\.org\\'"))
 
 (add-to-list 'org-refile-targets '(ndk/org-refile-candidates :maxlevel . 3))
 
@@ -258,7 +258,6 @@
                ;; only title as a string.
                ("C-c n i" . org-roam-ql-insert-node-title))))
 
-
 ;; dendroam
 (use-package! dendroam
   :after org-roam)
@@ -269,11 +268,13 @@
                 (propertize "${doom-type:14}" 'face 'font-lock-keyword-face)
                 (propertize "${tags:12}" 'face '(:inherit org-tag :box nil))))
 
-;; org-excalidraw
-(use-package! org-excalidraw
-  :after org
-  :config
-  (setq org-excalidraw-directory "~/OneDrive/03 Resources/Excalidraw Drawings"))
+;; org-sketch
+(use-package! org-sketch
+  :hook (org-mode . org-sketch-mode)
+  :init
+  (setq org-sketch-note-dir "~/org/draw.io" ;; xopp， drawio 文件存储目录
+        org-sketch-apps '("drawio")  ;; 设置使用的sketch应用
+        ))
 
 ;; org-roam-ui
 (use-package! websocket
